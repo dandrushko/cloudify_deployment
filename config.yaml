@@ -1,0 +1,82 @@
+manager:
+  private_ip: 172.17.0.2
+  public_ip: 172.17.0.2
+  security:
+    ssl_enabled: false
+    admin_password: admin
+  monitoring_install: &monitoring_install
+    skip_installation: true
+
+riemann:
+  <<: *monitoring_install
+
+amqpinflux:
+  <<: *monitoring_install
+
+influxdb:
+  <<: *monitoring_install
+
+#java:
+#  <<: *monitoring_install
+
+stage:
+  skip_installation: false
+
+python:
+  # Some plugins installed from sources require compilation - installs a
+  # compiler and the python headers to allow that.
+  install_python_compilers: false
+
+  # If set to true, python sources (e.g. pip) will be removed when
+  # uninstalling the Cloudify Manager. NOTE: only set to true if those
+  # dependencies weren't available before Cloudify Manager installation
+  remove_on_teardown: false
+
+sanity:
+  skip_sanity: true
+
+dev:
+  # Constraints (in standard `pip` constraints format) to pass on to `pip`
+  # when installing overlays (such as `rest_service_source_url`, `dsl_parser_source_url`
+  # and so on). Example:
+  # requests==2.13.0
+  # requests-toolbelt==0.7.1
+  pip_constraints: ''
+  sources:
+    cloudify_resources_url: ''
+    amqpinflux_source_url: ''
+    rest_client_source_url: ''
+    plugins_common_source_url: ''
+    script_plugin_source_url: ''
+    agent_source_url: ''
+    dsl_parser_source_url: ''
+
+
+validations:
+  skip_validations: false
+  minimum_required_total_physical_memory_in_mb: 3700
+  minimum_required_available_disk_space_in_gb: 5
+  expected_python_version: '2.7'
+  supported_distros: ['centos', 'redhat']
+  supported_distro_versions: ['7']
+
+usage_collector:
+  collect_cloudify_uptime:
+    # True if the uptime collector will be installed
+    active: true
+
+    # Sets the interval between running the uptime collector in hours
+    interval_in_hours: 4
+
+  collect_cloudify_usage:
+    # True if the usage collector will be installed
+    active: true
+
+    # Sets the interval between running the usage collector in days
+    interval_in_days: 1
+
+services_to_install:
+  - 'database_service'
+  - 'queue_service'
+  - 'composer_service'
+  - 'manager_service'
